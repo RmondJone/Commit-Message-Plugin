@@ -1,5 +1,6 @@
 package com.rmondjone.commit;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 
 import javax.swing.JComboBox;
@@ -33,8 +34,14 @@ public class CommitPannel {
     private JPanel mainPanel;
 
     public CommitPannel(Project project) {
+        //设置提交类型默认值
         for (ChangeType type : ChangeType.values()) {
             mTypeComboBox.addItem(type);
+        }
+        //设置提交版本默认值
+        String versionField = PropertiesComponent.getInstance().getValue("VersionField");
+        if (!"".equals(versionField) && versionField != null) {
+            mVersionField.setText(versionField);
         }
     }
 
@@ -43,6 +50,8 @@ public class CommitPannel {
     }
 
     public CommitMessage getCommitMessage() {
+        //记录版本值
+        PropertiesComponent.getInstance().setValue("VersionField", mVersionField.getText().trim());
         return new CommitMessage(
                 (ChangeType) mTypeComboBox.getSelectedItem(),
                 mVersionField.getText().trim(),
