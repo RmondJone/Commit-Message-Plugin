@@ -4,7 +4,8 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.PopupChooserBuilder;
+import com.intellij.ui.components.JBList;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -88,10 +89,10 @@ public class CommitPannel {
      * @return
      */
     public JBPopup creatVersionHistoryChoosePop(List<String> list) {
-        JBPopup popup = JBPopupFactory.getInstance().createPopupChooserBuilder(list).setItemChosenCallback(s -> {
-            mVersionField.setText(s);
-        }).createPopup();
-        return popup;
+        JBList<String> jbList = new JBList<>();
+        jbList.setListData(list.toArray(new String[list.size()]));
+        PopupChooserBuilder popupChooserBuilder = new PopupChooserBuilder(jbList);
+        return popupChooserBuilder.setItemChoosenCallback(() -> mVersionField.setText(jbList.getSelectedValue())).createPopup();
     }
 
     public JPanel getMainPanel() {
