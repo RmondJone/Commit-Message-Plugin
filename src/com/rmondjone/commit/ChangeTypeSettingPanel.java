@@ -34,7 +34,7 @@ public class ChangeTypeSettingPanel {
                                 (new AnActionButton("Reset Default CommitTypes", AllIcons.Actions.Rollback) {
                                     @Override
                                     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-                                        aliasTable.reset(dataSettings);
+                                        aliasTable.reset(new DataSettings());
                                     }
                                 }).createPanel(), BorderLayout.CENTER);
         //设置双击事件
