@@ -11,11 +11,11 @@ class CommitMessage {
     private static final int MAX_LINE_LENGTH = 72; // https://stackoverflow.com/a/2120040/5138796
     private final String content;
 
-    CommitMessage(ChangeType changeType, String changeScope, String shortDescription, String longDescription) {
+    CommitMessage(TypeAlias changeType, String changeScope, String shortDescription, String longDescription) {
         this.content = buildContent(changeType, changeScope, shortDescription, longDescription);
     }
 
-    private String buildContent(ChangeType changeType, String changeScope, String shortDescription, String longDescription) {
+    private String buildContent(TypeAlias changeType, String changeScope, String shortDescription, String longDescription) {
         StringBuilder builder = new StringBuilder();
         builder.append('[');
         builder.append(changeType.getTitle());

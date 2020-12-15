@@ -1,10 +1,12 @@
 package com.rmondjone.commit;
 
+import com.google.gson.Gson;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBList;
 
 import java.awt.Dimension;
@@ -19,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class CommitPannel {
+public class CommitPanel {
 
     Project project;
 
@@ -55,10 +57,24 @@ public class CommitPannel {
      * 版本历史记录
      */
     private List<String> versionFieldList = new ArrayList<>(2);
+    /**
+     * 注释：提交类型模板
+     * 时间：2020/12/15 0015 15:59
+     * 作者：郭翰林
+     */
+    private DataSettings dataSettings;
 
-    public CommitPannel(Project project) {
+    public CommitPanel(Project project) {
+        //获取提交类型模板数据
+        String changeTypesJson = PropertiesComponent.getInstance().getValue("ChangeTypes");
+        if (!StringUtil.isEmpty(changeTypesJson)) {
+            Gson gson = new Gson();
+            dataSettings = gson.fromJson(changeTypesJson, DataSettings.class);
+        } else {
+            dataSettings = new DataSettings();
+        }
         //设置提交类型默认值
-        for (ChangeType type : ChangeType.values()) {
+        for (TypeAlias type : dataSettings.getTypeAliases()) {
             mTypeComboBox.addItem(type);
         }
         //设置提交版本默认值
@@ -124,7 +140,7 @@ public class CommitPannel {
     public CommitMessage getCommitMessage() {
         saveVersionFieldList();
         return new CommitMessage(
-                (ChangeType) mTypeComboBox.getSelectedItem(),
+                (TypeAlias) mTypeComboBox.getSelectedItem(),
                 mVersionField.getText().trim(),
                 mSimpleField.getText().trim(),
                 mDetailField.getText().trim());

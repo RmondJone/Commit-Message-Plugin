@@ -12,11 +12,11 @@ import javax.swing.JComponent;
  */
 public class CommitDialog extends DialogWrapper {
 
-    private final CommitPannel panel;
+    private final CommitPanel panel;
 
     CommitDialog(@Nullable Project project) {
         super(project);
-        panel = new CommitPannel(project);
+        panel = new CommitPanel(project);
         setTitle("Commit");
         setOKButtonText("OK");
         init();
