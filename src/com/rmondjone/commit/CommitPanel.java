@@ -1,6 +1,9 @@
 package com.rmondjone.commit;
 
 import com.google.gson.Gson;
+import com.intellij.dvcs.repo.Repository;
+import com.intellij.dvcs.repo.RepositoryImpl;
+import com.intellij.dvcs.repo.VcsRepositoryManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
@@ -12,10 +15,12 @@ import com.intellij.ui.components.JBList;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -50,6 +55,10 @@ public class CommitPanel {
      */
     private JButton mVersionHistoryButton;
     /**
+     * 分支号作为修改版本选项
+     */
+    private JCheckBox branchCheckBox;
+    /**
      * 版本历史记录Pop
      */
     private JBPopup popup;
@@ -65,6 +74,9 @@ public class CommitPanel {
     private DataSettings dataSettings;
 
     public CommitPanel(Project project) {
+        //获取当前分支名
+        Collection<Repository> repositories = VcsRepositoryManager.getInstance(project).getRepositories();
+        String currentBranchName = ((RepositoryImpl) ((ArrayList) repositories).get(0)).getCurrentBranchName();
         //获取提交类型模板数据
         String changeTypesJson = PropertiesComponent.getInstance().getValue("ChangeTypes");
         if (!StringUtil.isEmpty(changeTypesJson)) {
@@ -78,8 +90,18 @@ public class CommitPanel {
             mTypeComboBox.addItem(type);
         }
         //设置提交版本默认值
-        String lastVersion = PropertiesComponent.getInstance().getValue("VersionField");
-        mVersionField.setText(lastVersion);
+        branchCheckBox.setSelected(PropertiesComponent.getInstance().getBoolean("BranchCheckBox", true));
+        branchCheckBox.addChangeListener(e -> {
+            if (branchCheckBox.isSelected()) {
+                mVersionField.setText(currentBranchName);
+            }
+        });
+        if (branchCheckBox.isSelected()) {
+            mVersionField.setText(currentBranchName);
+        } else {
+            String lastVersion = PropertiesComponent.getInstance().getValue("VersionField");
+            mVersionField.setText(lastVersion);
+        }
         String[] versionFields = PropertiesComponent.getInstance().getValues("VersionFields");
         if (versionFields != null) {
             versionFieldList = Arrays.asList(versionFields);
@@ -124,7 +146,10 @@ public class CommitPanel {
         List<String> saveVersionFieldList = new ArrayList<>(versionFieldList);
         Collections.reverse(saveVersionFieldList);
         String version = mVersionField.getText().trim();
-        PropertiesComponent.getInstance().setValue("VersionField", version);
+        if (!branchCheckBox.isSelected()) {
+            PropertiesComponent.getInstance().setValue("VersionField", version);
+        }
+        PropertiesComponent.getInstance().setValue("BranchCheckBox", branchCheckBox.isSelected() + "");
         if (!saveVersionFieldList.contains(version)) {
             saveVersionFieldList.add(version);
             //只保留最近10次提交版本记录

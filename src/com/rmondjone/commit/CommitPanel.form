@@ -110,6 +110,14 @@
           </component>
         </children>
       </grid>
+      <component id="e32e2" class="javax.swing.JCheckBox" binding="branchCheckBox">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="以当前分支号作为修改版本"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>
