@@ -73,10 +73,16 @@ public class CommitPanel {
      */
     private DataSettings dataSettings;
 
+    /**
+     * 工程名
+     */
+    private String projectName;
+
     public CommitPanel(Project project) {
         //获取当前分支名
         Collection<Repository> repositories = VcsRepositoryManager.getInstance(project).getRepositories();
         String currentBranchName = ((RepositoryImpl) ((ArrayList) repositories).get(0)).getCurrentBranchName();
+        projectName = ((RepositoryImpl) ((ArrayList) repositories).get(0)).getProject().getName();
         //获取提交类型模板数据
         String changeTypesJson = PropertiesComponent.getInstance().getValue("ChangeTypes");
         if (!StringUtil.isEmpty(changeTypesJson)) {
@@ -102,7 +108,7 @@ public class CommitPanel {
             String lastVersion = PropertiesComponent.getInstance().getValue("VersionField");
             mVersionField.setText(lastVersion);
         }
-        String[] versionFields = PropertiesComponent.getInstance().getValues("VersionFields");
+        String[] versionFields = PropertiesComponent.getInstance().getValues(projectName);
         if (versionFields != null) {
             versionFieldList = Arrays.asList(versionFields);
             Collections.reverse(versionFieldList);
@@ -155,9 +161,9 @@ public class CommitPanel {
             //只保留最近10次提交版本记录
             if (saveVersionFieldList.size() > 10) {
                 List<String> subSaveVersionFieldList = saveVersionFieldList.subList(saveVersionFieldList.size() - 10, saveVersionFieldList.size());
-                PropertiesComponent.getInstance().setValues("VersionFields", subSaveVersionFieldList.toArray(new String[10]));
+                PropertiesComponent.getInstance().setValues(projectName, subSaveVersionFieldList.toArray(new String[10]));
             } else {
-                PropertiesComponent.getInstance().setValues("VersionFields", saveVersionFieldList.toArray(new String[versionFieldList.size() + 1]));
+                PropertiesComponent.getInstance().setValues(projectName, saveVersionFieldList.toArray(new String[versionFieldList.size() + 1]));
             }
         }
     }

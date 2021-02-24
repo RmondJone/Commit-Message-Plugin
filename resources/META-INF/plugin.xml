@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.rmondjone.commit_plugin</id>
     <name>Commit-Message-Create</name>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <vendor email="2318560278@qq.com" url="https://github.com/RmondJone">郭翰林</vendor>
 
     <description>
