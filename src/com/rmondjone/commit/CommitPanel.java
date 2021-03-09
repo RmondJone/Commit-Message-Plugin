@@ -81,8 +81,11 @@ public class CommitPanel {
     public CommitPanel(Project project) {
         //获取当前分支名
         Collection<Repository> repositories = VcsRepositoryManager.getInstance(project).getRepositories();
-        String currentBranchName = ((RepositoryImpl) ((ArrayList) repositories).get(0)).getCurrentBranchName();
-        projectName = ((RepositoryImpl) ((ArrayList) repositories).get(0)).getProject().getName();
+        String currentBranchName = null;
+        if (!repositories.isEmpty()) {
+            currentBranchName = ((RepositoryImpl) ((ArrayList) repositories).get(0)).getCurrentBranchName();
+        }
+        projectName = project.getName();
         //获取提交类型模板数据
         String changeTypesJson = PropertiesComponent.getInstance().getValue("ChangeTypes");
         if (!StringUtil.isEmpty(changeTypesJson)) {
@@ -97,12 +100,13 @@ public class CommitPanel {
         }
         //设置提交版本默认值
         branchCheckBox.setSelected(PropertiesComponent.getInstance().getBoolean("BranchCheckBox", true));
+        String finalCurrentBranchName = currentBranchName;
         branchCheckBox.addChangeListener(e -> {
-            if (branchCheckBox.isSelected()) {
-                mVersionField.setText(currentBranchName);
+            if (branchCheckBox.isSelected() && !StringUtil.isEmpty(finalCurrentBranchName)) {
+                mVersionField.setText(finalCurrentBranchName);
             }
         });
-        if (branchCheckBox.isSelected()) {
+        if (branchCheckBox.isSelected() && !StringUtil.isEmpty(currentBranchName)) {
             mVersionField.setText(currentBranchName);
         } else {
             String lastVersion = PropertiesComponent.getInstance().getValue("VersionField");

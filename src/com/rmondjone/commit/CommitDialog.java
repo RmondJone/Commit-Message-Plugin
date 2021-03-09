@@ -14,6 +14,7 @@ public class CommitDialog extends DialogWrapper {
 
     private final CommitPanel panel;
 
+
     CommitDialog(@Nullable Project project) {
         super(project);
         panel = new CommitPanel(project);
